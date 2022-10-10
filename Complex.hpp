@@ -8,213 +8,201 @@
 class Complex
 {
 private:
-    double real, imaginary;
+    double re, im;
 
 public:
     // Constructor
-    Complex(const double x = 0, const double y = 0, char form[] = "algebraic")
+    Complex(const double &x = 1, const double &y = 0, bool polarForm = false)
     {
-        if (form == "algebraic")
+        if (polarForm)
         {
-            real = x;
-            imaginary = y;
+            re = x * cos(y);
+            im = x * sin(y);
         }
-        else if (form == "polar")
+        else
         {
-            // modulus = x;
-            // argument = y;
-            real = x * cos(y);
-            imaginary = y * sin(y);
+            re = x;
+            im = y;
         }
     }
 
-    double Re() const
+    // Real part of a complex number [TESTED]
+    static double Re(const Complex &complex)
     {
-        return real;
+        return complex.re;
     }
 
-    double Im() const
+    // Imaginary part of a complex number [TESTED]
+    static double Im(const Complex &complex)
     {
-        return imaginary;
+        return complex.im;
     }
 
-    // Equality
+    // Absolute value of a complex number [TESTED]
+    static double Abs(const Complex &complex)
+    {
+        return sqrt(complex.re * complex.re + complex.im * complex.im);
+    }
+
+    // Returns argument of a complex number [TESTED]
+    static double Arg(const Complex &complex)
+    {
+        return atan2(complex.im, complex.re);
+    }
+
+    // Equality operator [TESTED]
     bool operator==(const Complex &other) const
     {
-        return (real == other.real && imaginary == other.imaginary);
+        return (re == other.re && im == other.im);
     }
 
-    // Inequality
+    // Inequality operator [TESTED]
     bool operator!=(const Complex &other) const
     {
         // return !(this == other);
-        return (real != other.real || imaginary != other.imaginary);
+        return (re != other.re || im != other.im);
     }
 
+    // Stream output [TESTED]
     friend std::ostream &operator<<(std::ostream &os, const Complex &complex)
     {
-        os << complex.real << " + " << complex.imaginary << "i";
+        os << complex.re;
+        if (complex.im >= 0)
+        {
+            os << "+";
+        }
+        os << complex.im << "i";
         return os;
     }
 
-    // Absolute value
-    double Abs() const
-    {
-        return sqrt(real * real + imaginary * imaginary);
-    }
-
-    // Argument
-    double Arg() const
-    {
-        return atan2(imaginary, real);
-    }
-
-    // Unary plus
+    // Unary plus [TESTED]
     Complex operator+() const
     {
-        return Complex(real, imaginary);
+        return Complex(re, im);
     }
 
-    // Addition
-    friend Complex operator+(const Complex &a, const Complex &b)
+    // Addition [TESTED]
+    friend Complex operator+(const Complex &complex, const Complex &other)
     {
-        return Complex(a.real + b.real, a.imaginary + b.imaginary);
+        return Complex(complex.re + other.re, complex.im + other.im);
     }
 
-    // Increment
+    // Increment [TESTED]
     void operator+=(const Complex &other)
     {
-        this->real += other.real;
-        this->imaginary += other.imaginary;
+        re += other.re;
+        im += other.im;
     }
 
-    // Unary Minus
+    // Unary Minus [TESTED]
     Complex operator-() const
     {
-        return Complex(-real, -imaginary);
+        return Complex(-re, -im);
     }
 
-    // Subtraction
-    friend Complex operator-(const Complex &a, const Complex &b)
+    // Subtraction [TESTED]
+    friend Complex operator-(const Complex &complex, const Complex &other)
     {
-        return Complex(a.real - b.real, a.imaginary - b.imaginary);
+        return Complex(complex.re - other.re, complex.im - other.im);
     }
 
-    // Decrement
+    // Decrement [TESTED]
     void operator-=(const Complex &other)
     {
-        this->real -= other.real;
-        this->imaginary -= other.imaginary;
+        re -= other.re;
+        im -= other.im;
     }
 
-    // Multiplication
-    friend Complex operator*(const Complex &a, const Complex &b)
+    // Multiplication [TESTED]
+    friend Complex operator*(const Complex &complex, const Complex &other)
     {
-        return Complex(a.real * b.real - a.imaginary * b.imaginary, a.real * b.imaginary + a.imaginary * b.real);
+        return Complex(complex.re * other.re - complex.im * other.im, complex.re * other.im + complex.im * other.re);
     }
 
+    // [TESTED]
     void operator*=(const Complex &other)
     {
-        this->real = real * other.real - imaginary * other.imaginary;
-        this->imaginary = real * other.imaginary + imaginary * other.real;
+        double tmp = re;
+        re = tmp * other.re - im * other.im;
+        im = tmp * other.im + im * other.re;
     }
 
-    // Complex Conjugate (x - yi)
-    Complex Conjugate() const
+    // Complex Conjugate (x - yi) [TESTED]
+    static Complex Conjugate(const Complex &complex)
     {
-        return Complex(real, -imaginary);
+        return Complex(complex.re, -complex.im);
     }
 
-    // Complex reciprocal (Conj(z) / Abs(z)^2)
-    Complex Reciprocal() const
+    // Complex reciprocal (Conj(z) / Abs(z)^2) [TESTED]
+    static Complex Reciprocal(const Complex &complex)
     {
-        double abs2 = real * real + imaginary * imaginary;
+        double abs2 = complex.re * complex.re + complex.im * complex.im;
 
         if (abs2 == 0)
         {
             throw "Division by zero";
         }
 
-        return Complex(real / abs2, -imaginary / abs2);
+        return Complex(complex.re / abs2, -complex.im / abs2);
     }
 
-    friend Complex operator/(const Complex &a, const Complex &b)
+    // Division operator [TESTED]
+    friend Complex operator/(const Complex &complex, const Complex &other)
     {
-        return a * b.Reciprocal();
-    }
-};
-
-double Re(const Complex &complex)
-{
-    return complex.Re();
-}
-
-double Im(const Complex &complex)
-{
-    return complex.Im();
-}
-
-double Abs(const Complex &complex)
-{
-    return complex.Abs();
-}
-
-double Arg(const Complex &complex)
-{
-    return complex.Arg();
-}
-
-Complex Conjugate(const Complex &complex)
-{
-    return complex.Conjugate();
-}
-
-Complex Reciprocal(const Complex &complex)
-{
-    return complex.Reciprocal();
-}
-
-// Complex logarithm, by default logarithm base is set to e = 2.7182818284590452354
-Complex Log(const Complex &complex, const Complex &base = M_E)
-{
-    if (complex == 0)
-    {
-        throw "Logarithm of 0 is undefined";
+        return complex * Reciprocal(other);
     }
 
+    // Calculates logarithm o fa complex number. By default base is set to e (~2.7182)
+    static Complex Log(const Complex &complex, const Complex &base = M_E)
     {
-        if (base == M_E)
+        if (complex == 0)
         {
-            return Complex(log(Abs(complex)), Arg(complex));
+            throw "Logarithm of 0 is undefined";
         }
 
-        return Log(complex) / Log(base);
+        {
+            if (base == M_E)
+            {
+                return Complex(log(Abs(complex)), Arg(complex));
+            }
+
+            return Log(complex) / Log(base);
+        }
     }
-}
 
-Complex Exp(const Complex &complex)
-{
-    return exp(Re(complex)) * Complex(1, Im(complex), "polar");
-}
-
-Complex Pow(const Complex &complex, const Complex &power)
-{
-    double abs = Abs(complex);
-    double arg = Arg(complex);
-    if (Im(power) == 0 && (abs != 0 || Re(power) > 0))
+    // Raises e to complex power
+    static Complex Exp(const Complex &complex)
     {
-        return Complex(pow(abs, Re(power)), Re(power) * arg, "polar");
+        return exp(Re(complex)) * Complex(1, Im(complex), true);
     }
 
-    return Exp(Log(complex) * power);
-}
+    // Computes complex number raised to the complex power
+    static Complex Pow(const Complex &complex, const Complex &power)
+    {
+        if (complex == 0 && power.re > 0 && power.im == 0)
+        {
+            return 0;
+        }
+        return Exp(Log(complex) * power);
+    }
 
-Complex Sin(const Complex &complex)
-{
-    return Complex(sin(complex.Re()) * cosh(complex.Im()), cos(complex.Re()) * sinh(complex.Im()));
-}
+    static Complex Sin(const Complex &complex)
+    {
+        return Complex(sin(complex.re) * cosh(complex.im), cos(complex.re) * sinh(complex.im));
+    }
 
-Complex Cos(const Complex &complex)
-{
-    return Complex(cos(complex.Re()) * cosh(complex.Im()), -sin(complex.Re()) * sinh(complex.Im()));
-}
+    static Complex Cos(const Complex &complex)
+    {
+        return Complex(cos(complex.re) * cosh(complex.im), -sin(complex.re) * sinh(complex.im));
+    }
+
+    static Complex Tan(const Complex &complex)
+    {
+        return Sin(complex) / Cos(complex);
+    }
+
+    static Complex Ctg(const Complex &complex)
+    {
+        return Cos(complex) / Sin(complex);
+    }
+};
