@@ -1,8 +1,5 @@
 #pragma once
 
-#ifndef _COMPLEX
-#define _COMPLEX
-
 #include <iostream>
 #include <cmath>
 
@@ -14,7 +11,7 @@ private:
 
 public:
     // Constructor
-    complex(const double &x = 1, const double &y = 0, const bool &polar = false)
+    complex(const double &x = 0, const double &y = 0, const bool &polar = false)
     {
         if (polar)
         {
@@ -28,13 +25,10 @@ public:
         }
     }
 
-    // Copy
-    complex(const complex &z)
+    bool IsReal() const
     {
+        return imaginary == 0;
     }
-
-    // Destructor
-    ~complex() {}
 
     // Real part of a complex number
     static double Re(const complex &z)
@@ -161,13 +155,13 @@ public:
     }
 
     // Calculates logarithm of a complex number. By default base is set to e (~2.7182)
-    static complex Log(const complex &z, const complex &c = M_E)
+    static complex Log(const complex &z, const complex &base = M_E)
     {
         if (z != 0)
         {
-            if (c != M_E)
+            if (base != M_E)
             {
-                return Log(z) / Log(c);
+                return Log(z) / Log(base);
             }
 
             return complex(log(Abs(z)), Arg(z));
@@ -175,19 +169,23 @@ public:
     }
 
     // Raises e to complex power
-    static complex Exp(const complex &z)
+    static complex Exp(const complex &exponent, const complex &base = M_E)
     {
-        return exp(Re(z)) * complex(1, Im(z), true);
+        if (base == M_E)
+        {
+            return exp(Re(exponent)) * complex(1, Im(exponent), true);
+        }
+        return Exp(Log(base) * exponent);
     }
 
     // Computes complex number raised to the complex power
-    static complex Pow(const complex &z, const complex &c)
+    static complex Pow(const complex &base, const complex &power)
     {
-        if (z == 0 && Re(c) > 0 && Im(c) == 0)
+        if (base == 0 && Re(power) > 0 && Im(power) == 0)
         {
             return 0;
         }
-        return Exp(Log(z) * c);
+        return Exp(Log(base) * power);
     }
 
     static complex Sin(const complex &z)
@@ -210,5 +208,3 @@ public:
         return Cos(z) / Sin(z);
     }
 };
-
-#endif
