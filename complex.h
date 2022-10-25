@@ -25,6 +25,8 @@ public:
         }
     }
 
+#define C_I complex(0, 1)
+
     bool IsReal() const
     {
         return imaginary == 0;
@@ -67,14 +69,31 @@ public:
     }
 
     // Stream output
-    friend std::ostream &operator<<(std::ostream &os, const complex &z)
+    friend std::ostream &operator<<(std::ostream &os, const complex &number)
     {
-        os << z.real;
-        if (z.imaginary >= 0)
+        if (number.real != 0)
         {
-            os << "+";
+            os << number.real;
+
+            if (number.imaginary != 0)
+            {
+                if (number.imaginary > 0)
+                {
+                    os << "+";
+                }
+                os << number.imaginary << "i";
+                return os;
+            }
+
+            os << number.real;
+            return os;
         }
-        os << z.imaginary << "i";
+        if (number.imaginary != 0)
+        {
+            os << number.imaginary << "i";
+            return os;
+        }
+        os << 0;
         return os;
     }
 
@@ -145,7 +164,8 @@ public:
             return complex(Re(z) / abs2, -Im(z) / abs2);
         }
 
-        // throw "Division by zero";
+        std::cout << "Division by zero\n";
+        exit(163);
     }
 
     // Division operator [TESTED]
@@ -155,17 +175,19 @@ public:
     }
 
     // Calculates logarithm of a complex number. By default base is set to e (~2.7182)
-    static complex Log(const complex &z, const complex &base = M_E)
+    static complex Log(const complex &number, const complex &base = M_E)
     {
-        if (z != 0)
+        if (number != 0)
         {
             if (base != M_E)
             {
-                return Log(z) / Log(base);
+                return Log(number) / Log(base);
             }
 
-            return complex(log(Abs(z)), Arg(z));
+            return complex(log(Abs(number)), Arg(number));
         }
+        std::cout << "Log(0) is undefined\n";
+        exit(185);
     }
 
     // Raises e to complex power
