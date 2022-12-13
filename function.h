@@ -1,18 +1,22 @@
-#pragma once
+#ifndef FUNCTION_H
+#define FUNCTION_H
 
-#include "complex.h"
+#include <complex>
 
+using std::complex;
+
+template <class T>
 class function
 {
 private:
-    complex parameter;
+    complex<double> parameter;
     char type;
     const function *argument;
     const function *left;
     const function *right;
 
 public:
-    function(const complex &_parameter, const char &_type, const function *f, const function *g)
+    function(const complex<T> &_parameter, const char &_type, const function *f, const function *g)
     {
         parameter = _parameter;
         type = _type;
@@ -20,7 +24,7 @@ public:
         right = g;
     }
 
-    function(const complex &_constant)
+    function(const complex<T> &_constant)
     {
         parameter = _constant;
         type = 'c';
@@ -28,7 +32,7 @@ public:
         right = NULL;
     }
 
-    function(const double &_constant)
+    function(const T &_constant)
     {
         parameter = _constant;
         type = 'c';
@@ -51,12 +55,12 @@ public:
         return function(0, 'o', &f, &g);
     }
 
-    static function Constant(const complex &_constant)
+    static function Constant(const complex<T> &_constant)
     {
         return function(_constant, 'c', NULL, NULL);
     }
 
-    static function Power(const complex &_power)
+    static function Power(const complex<T> &_power)
     {
         if (_power != 0)
         {
@@ -65,12 +69,12 @@ public:
         return Constant(1);
     }
 
-    static function Exponent(const complex &_base = M_E)
+    static function Exponent(const complex<T> &_base = M_E)
     {
         return function(_base, 'e', NULL, NULL);
     }
 
-    static function Logarithm(const complex &_base = M_E)
+    static function Logarithm(const complex<T> &_base = M_E)
     {
         return function(_base, 'l', NULL, NULL);
     }
@@ -132,7 +136,7 @@ public:
     //     }
     // }
 
-    complex Evaluate(const complex &number) const
+    complex<T> Evaluate(const complex<T> &number) const
     {
         switch (type)
         {
@@ -182,3 +186,5 @@ public:
         return function::Constant(_coefficient) * _function;
     }
 };
+
+#endif

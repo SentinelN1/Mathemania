@@ -1,5 +1,5 @@
 #pragma once
-
+#define M_E 2.71828182846
 #include <iostream>
 #include <cmath>
 
@@ -187,7 +187,7 @@ public:
             return complex(log(Abs(number)), Arg(number));
         }
         std::cout << "Log(0) is undefined\n";
-        exit(185);
+        exit(185); // Replace with exception
     }
 
     // Raises e to complex power
