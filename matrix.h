@@ -36,6 +36,15 @@ public:
     }
 
     // Constructor
+    Matrix<T>(const T &t)
+    {
+        rows = 1;
+        columns = 1;
+        data = new T[rows * columns];
+        data[0] = t;
+    }
+
+    // Constructor
     // Creates matrix from initializer_list<initializer_list>
     Matrix<T>(std::initializer_list<std::initializer_list<T>> matrix)
     {
@@ -133,6 +142,23 @@ public:
         {
             data[i] = other.data[i];
         }
+
+        return *this;
+    }
+
+    // operator=
+    Matrix<T> &operator=(const T &t)
+    {
+        if (data)
+        {
+            delete[] data;
+        }
+
+        rows = 1;
+        columns = 1;
+
+        data = new T[rows * columns];
+        data[0] = t;
 
         return *this;
     }
