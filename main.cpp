@@ -9,9 +9,8 @@ using std::endl;
 
 int main()
 {
-    Matrix<double> m = {{1, 3}, {-2, 0}};
-    int i = 2;
-    m = 2 * m;
-    cout << 2 * m << endl;
+    Matrix<double> J = {{2, 1, 0}, {0, 2, 0}, {0, 0, -1}};
+    cout << J << endl;
+    cout << J.Determinant() << endl;
     return 0;
 }

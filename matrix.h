@@ -295,14 +295,14 @@ public:
     }
 
     // Element of a matrix
-    T &operator()(const int &row, const int &col)
+    T &operator()(const int &row, const int &column)
     {
-        if (row >= rows || col >= columns)
+        if (row >= rows || column >= columns)
         {
             throw std::invalid_argument("Index out of range.");
         }
 
-        T &tmp = data[row * columns + col];
+        T &tmp = data[row * columns + column];
 
         return tmp;
     }
@@ -323,6 +323,48 @@ public:
             }
         }
         return matrix;
+    }
+
+    Matrix<T> Minor(const int &row, const int &column)
+    {
+        Matrix<T> matrix(rows - 1, columns - 1);
+        for (int i = 0; i < rows - 1; i++)
+        {
+            for (int j = 0; j < columns - 1; j++)
+            {
+                int x = i;
+                int y = j;
+                if (i >= row)
+                    x = i + 1;
+                if (j >= column)
+                    y = j + 1;
+                matrix.data[i * (columns - 1) + j] = data[x * columns + y];
+            }
+        }
+        return matrix;
+    }
+
+    T Determinant()
+    {
+        if (rows != columns)
+        {
+            throw std::invalid_argument("Determinant of non-square matrix is not defined.");
+        }
+        if (rows == 1)
+            return data[0];
+        T det = 0;
+        for (int i = 0; i < columns; i++)
+        {
+            if (i % 2 == 0)
+            {
+                det += data[i] * Minor(0, i).Determinant();
+            }
+            else
+            {
+                det -= data[i] * Minor(0, i).Determinant();
+            }
+        }
+        return det;
     }
 };
 
