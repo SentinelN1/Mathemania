@@ -325,7 +325,7 @@ public:
         return matrix;
     }
 
-    Matrix<T> Minor(const int &row, const int &column)
+    Matrix<T> Minor(const int &row, const int &column) const
     {
         Matrix<T> matrix(rows - 1, columns - 1);
         for (int i = 0; i < rows - 1; i++)
@@ -344,7 +344,7 @@ public:
         return matrix;
     }
 
-    T Determinant()
+    T Determinant() const
     {
         if (rows != columns)
         {
@@ -366,6 +366,68 @@ public:
         }
         return det;
     }
+
+    Matrix<T> Transpose() const
+    {
+        Matrix<T> matrix(columns, rows);
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < columns; j++)
+            {
+                matrix(j, i) = data[i * columns + j];
+            }
+        }
+        return matrix;
+    }
+
+    Matrix<T> Inverse() const
+    {
+        if (rows != columns)
+        {
+            throw std::invalid_argument("No Inverse.");
+        }
+
+        T det = Determinant();
+
+        if (det == 0)
+        {
+            throw std::invalid_argument("Zero determinant.");
+        }
+
+        Matrix<T> matrix(rows, columns);
+
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < columns; j++)
+            {
+                T tmp = Minor(j, i).Determinant();
+                matrix(i, j) = tmp;
+                if ((i + j) % 2 != 0 && tmp != 0)
+                {
+                    matrix(i, j) = -1 * tmp;
+                }
+            }
+        }
+        matrix = (1 / det) * matrix;
+        return matrix;
+    }
+
+    // Matrix<T> Power(const int &power) const
+    // {
+    // if (rows != columns)
+    // {
+    //     throw std::invalid_argument("");
+    // }
+    // if (power == 0)
+    // {
+    //     return Identity(rows);
+    // }
+    // if (power == 0)
+    // }
+
+    // int Rank() const
+    // {
+    // }
 };
 
 #endif
