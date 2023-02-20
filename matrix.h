@@ -410,7 +410,7 @@ public:
     {
         if (rows != columns)
         {
-            throw std::invalid_argument("No Inverse.");
+            throw std::invalid_argument("Non-square matricies have no Inverse.");
         }
 
         T det = Determinant();
