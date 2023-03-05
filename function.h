@@ -5,23 +5,31 @@
 
 using std::complex;
 
+enum FunctionTypes {
+    contstant,
+    linear,
+    power,
+    exponential,
+    logarithmic
+};
+
 template <class T>
 class function
 {
 private:
-    complex<double> parameter;
+    complex<T> parameter;
     char type;
     const function *argument;
     const function *left;
     const function *right;
 
 public:
-    function(const complex<T> &_parameter, const char &_type, const function *f, const function *g)
+    function(const complex<T> &_parameter, const char &_type, const function &f, const function &g)
     {
         parameter = _parameter;
         type = _type;
-        left = f;
-        right = g;
+        left = &f;
+        right = &g;
     }
 
     function(const complex<T> &_constant)
