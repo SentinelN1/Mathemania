@@ -7,7 +7,6 @@ using std::endl;
 using namespace complex;
 
 int main() {
-    Complex<float> c(-1, 1);
-    cout << c * 2 << endl;
-    cout << 2 * c << endl;
+    Complex<float> i(0, -1);
+    cout << Exp(i * M_PI) << endl;
 }

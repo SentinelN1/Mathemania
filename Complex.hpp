@@ -5,35 +5,23 @@
 #include <iostream>
 
 namespace complex {
+    enum Form {
+        cartesian,
+        polar
+    };
+
     template<typename T = float>
     class Complex {
     private:
         T real, imaginary;
 
     public:
-        enum Form {
-            cartesian,
-            polar
-        };
-
-        // Constructor
-        Complex(const T &x = 0, const T &y = 0, Form form = cartesian) {
-            switch (form) {
-                case cartesian:
-                    real = x;
-                    imaginary = y;
-                    break;
-                case polar:
-                    real = x * cos(y);
-                    imaginary = x * sin(y);
-                    break;
-            }
-        }
-
+        // Is a number purely real?
         bool IsReal() const {
             return imaginary == 0;
         }
 
+        // Is a number purely imaginary?
         bool IsImaginary() const {
             return real == 0;
         }
@@ -56,6 +44,58 @@ namespace complex {
         // Argument of a complex number
         T Arg() const {
             return atan2(imaginary, real);
+        }
+
+        // Constructor
+        Complex(const T &x = 0, const T &y = 0, Form form = cartesian) {
+            switch (form) {
+                case cartesian:
+                    real = x;
+                    imaginary = y;
+                    break;
+                case polar:
+                    real = x * cos(y);
+                    imaginary = x * sin(y);
+                    break;
+            }
+        }
+
+        // Copy Constructor
+        Complex(const Complex &complex) {
+            if (this != &complex) {
+                real = complex.real;
+                imaginary = complex.imaginary;
+            }
+        }
+
+        // Move Constructor
+        Complex(Complex &&complex) noexcept {
+            if (this != &complex) {
+                real = complex.real;
+                imaginary = complex.imaginary;
+                complex.real = 0;
+                complex.imaginary = 0;
+            }
+        }
+
+        // Copy Assignment Operator
+        Complex &operator=(const Complex &complex) {
+            if (this != &complex) {
+                real = complex.real;
+                imaginary = complex.imaginary;
+            }
+            return *this;
+        }
+
+        // Move Assignment Operator
+        Complex &operator=(Complex &&complex) noexcept {
+            if (this != &complex) {
+                real = complex.real;
+                imaginary = complex.imaginary;
+                complex.real = 0;
+                complex.imaginary = 0;
+            }
+            return *this;
         }
 
         // Equality operator
@@ -153,51 +193,6 @@ namespace complex {
         friend Complex operator/(const Complex &complex1, const Complex &complex2) {
             return complex1 * complex2.Reciprocal();
         }
-
-//// Calculates logarithm of a complex number. By default base is set to e (~2.7182)
-//        static complex Log(const complex &number, const complex &base = M_E) {
-//            if (number != 0) {
-//                if (base != M_E) {
-//                    return Log(number) / Log(base);
-//                }
-//
-//                return complex(log(Abs(number)), Arg(number));
-//            }
-//            std::cout << "Log(0) is undefined\n";
-//            exit(185); // Replace with exception
-//        }
-//
-//// Raises e to complex power
-//        static complex Exp(const complex &exponent, const complex &base = M_E) {
-//            if (base == M_E) {
-//                return exp(Re(exponent)) * complex(1, Im(exponent), true);
-//            }
-//            return Exp(Log(base) * exponent);
-//        }
-//
-//// Computes complex number raised to the complex power
-//        static complex Pow(const complex &base, const complex &power) {
-//            if (base == 0 && Re(power) > 0 && Im(power) == 0) {
-//                return 0;
-//            }
-//            return Exp(Log(base) * power);
-//        }
-//
-//        static complex Sin(const complex &z) {
-//            return complex(sin(Re(z)) * cosh(Im(z)), cos(Re(z)) * sinh(Im(z)));
-//        }
-//
-//        static complex Cos(const complex &z) {
-//            return complex(cos(Re(z)) * cosh(Im(z)), -sin(Re(z)) * sinh(Im(z)));
-//        }
-//
-//        static complex Tan(const complex &z) {
-//            return Sin(z) / Cos(z);
-//        }
-//
-//        Complex Ctg(const Complex &z) {
-//            return Cos(z) / Sin(z);
-//        }
     };
 
     template<typename T>
@@ -229,4 +224,49 @@ namespace complex {
     Complex<T> Reciprocal(const Complex<T> &complex) {
         return complex.Reciprocal();
     }
+
+    // Complex Valued Logarithm
+    template<typename T>
+    Complex<T> Log(const Complex<T> &complex, const Complex<T> &base = M_E) {
+        if (complex == 0) {
+            throw std::exception();
+        }
+        if (base != M_E) {
+            return Log(complex) / Log(base);
+        }
+        return Complex<T>(log(Abs(complex)), Arg(complex));
+    }
+
+    // Complex valued exponent
+    template<typename T>
+    Complex<T> Exp(const Complex<T> &complex, const Complex<T> &base = M_E) {
+        if (base == M_E) {
+            return exp(Re(complex)) * Complex<T>(1, Im(complex), polar);
+        }
+        return Exp(Log(base) * complex);
+    }
+
+//// Computes complex number raised to the complex power
+//        static complex Pow(const complex &base, const complex &power) {
+//            if (base == 0 && Re(power) > 0 && Im(power) == 0) {
+//                return 0;
+//            }
+//            return Exp(Log(base) * power);
+//        }
+//
+//        static complex Sin(const complex &z) {
+//            return complex(sin(Re(z)) * cosh(Im(z)), cos(Re(z)) * sinh(Im(z)));
+//        }
+//
+//        static complex Cos(const complex &z) {
+//            return complex(cos(Re(z)) * cosh(Im(z)), -sin(Re(z)) * sinh(Im(z)));
+//        }
+//
+//        static complex Tan(const complex &z) {
+//            return Sin(z) / Cos(z);
+//        }
+//
+//        Complex Ctg(const Complex &z) {
+//            return Cos(z) / Sin(z);
+//        }
 }
