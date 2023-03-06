@@ -1,4 +1,5 @@
-.vscode
 main.cpp
 main.exe
 /CMakeLists.txt
+/.idea
+/cmake-build-debug

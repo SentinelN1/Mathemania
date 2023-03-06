@@ -1,12 +1,15 @@
 #include <iostream>
-#include "Complex.hpp"
+#include "Function.hpp"
+#include "Matrix.hpp"
 
 using std::cin;
 using std::cout;
 using std::endl;
 using namespace complex;
+using namespace matrix;
+using namespace function;
 
 int main() {
-    Complex<float> i(0, -1);
-    cout << Exp(i * M_PI) << endl;
+    Function<Complex<float>> f(2, power);
+    cout << f.Evaluate(3);
 }

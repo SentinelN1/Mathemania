@@ -1,5 +1,4 @@
 #pragma once
-#define _USE_MATH_DEFINES
 
 #include <cmath>
 #include <iostream>
@@ -10,7 +9,7 @@ namespace complex {
         polar
     };
 
-    template<typename T = float>
+    template<typename T = double>
     class Complex {
     private:
         T real, imaginary;
@@ -159,17 +158,19 @@ namespace complex {
                            complex1.real * complex2.imaginary + complex1.imaginary * complex2.real);
         }
 
-//        // Increment
-//        void operator+=(const Complex &complex) {
-//            real += complex.real;
-//            imaginary += complex.imaginary;
-//        }
-//
-//        // Decrement
-//        void operator-=(const Complex &complex) {
-//            real -= complex.real;
-//            imaginary -= complex.imaginary;
-//        }
+        // Increment
+        Complex &operator+=(const Complex &other) {
+            real += other.real;
+            imaginary += other.imaginary;
+            return *this;
+        }
+
+        // Decrement
+        Complex &operator-=(const Complex &other) {
+            real -= other.real;
+            imaginary -= other.imaginary;
+            return *this;
+        }
 //
 //        void operator*=(const Complex &complex) {
 //            *this = *this * complex;
@@ -246,27 +247,52 @@ namespace complex {
         return Exp(Log(base) * complex);
     }
 
-//// Computes complex number raised to the complex power
-//        static complex Pow(const complex &base, const complex &power) {
-//            if (base == 0 && Re(power) > 0 && Im(power) == 0) {
-//                return 0;
-//            }
-//            return Exp(Log(base) * power);
-//        }
-//
-//        static complex Sin(const complex &z) {
-//            return complex(sin(Re(z)) * cosh(Im(z)), cos(Re(z)) * sinh(Im(z)));
-//        }
-//
-//        static complex Cos(const complex &z) {
-//            return complex(cos(Re(z)) * cosh(Im(z)), -sin(Re(z)) * sinh(Im(z)));
-//        }
-//
-//        static complex Tan(const complex &z) {
-//            return Sin(z) / Cos(z);
-//        }
-//
-//        Complex Ctg(const Complex &z) {
-//            return Cos(z) / Sin(z);
-//        }
+    // Computes complex number raised to the complex power
+    template<typename T>
+    Complex<T> Pow(const Complex<T> &base, const Complex<T> &power) {
+        if (base == 0 && Re(power) > 0 && Im(power) == 0) {
+            return 0;
+        }
+        return Exp(Log(base) * power);
+    }
+
+    template<typename T>
+    Complex<T> Sin(const Complex<T> &complex) {
+        return Complex<T>(sin(Re(complex)) * cosh(Im(complex)), cos(Re(complex)) * sinh(Im(complex)));
+    }
+
+    template<typename T>
+    Complex<T> Cos(const Complex<T> &complex) {
+        return Complex<T>(cos(Re(complex)) * cosh(Im(complex)), -sin(Re(complex)) * sinh(Im(complex)));
+    }
+
+    template<typename T>
+    Complex<T> Tan(const Complex<T> &complex) {
+        return Sin(complex) / Cos(complex);
+    }
+
+    template<typename T>
+    Complex<T> Ctg(const Complex<T> &complex) {
+        return Cos(complex) / Sin(complex);
+    }
+
+    template<typename T>
+    Complex<T> Sec(const Complex<T> &complex) {
+        return Cos(complex).Reciprocal();
+    }
+
+    template<typename T>
+    Complex<T> Csc(const Complex<T> &complex) {
+        return Sin(complex).Reciprocal();
+    }
+
+    template<typename T>
+    Complex<T> Sinh(const Complex<T> &complex) {
+        return 0;
+    }
+
+    template<typename T>
+    Complex<T> Cosh(const Complex<T> &complex) {
+        return 0;
+    }
 }
