@@ -1,12 +1,10 @@
-#ifndef FUNCTION_H
-#define FUNCTION_H
-
+#pragma once
 #include <complex>
 
 using std::complex;
 
 enum FunctionTypes {
-    contstant,
+    constant,
     linear,
     power,
     exponential,
