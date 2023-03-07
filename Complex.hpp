@@ -30,6 +30,10 @@ namespace complex {
             return real;
         }
 
+        explicit operator double() const {
+            return real;
+        }
+
         // Imaginary part of a complex number
         T Imaginary() const {
             return imaginary;
@@ -109,26 +113,37 @@ namespace complex {
 
         // Stream output
         friend std::ostream &operator<<(std::ostream &os, const Complex<T> &complex) {
-//            if (complex.real != 0) {
-//                os << complex.real;
-//
-//                if (complex.imaginary != 0) {
-//                    if (complex.imaginary > 0) {
-//                        os << "+";
-//                    }
-//                    os << complex.imaginary << "i";
-//                    return os;
-//                }
-//
-//                os << complex.real;
-//                return os;
-//            }
-//            if (complex.imaginary != 0) {
-//                os << complex.imaginary << "i";
-//                return os;
-//            }
-//            os << 0;
-            os << "(" << complex.real << "; " << complex.imaginary << ")";
+            if (complex.IsReal()) {
+                os << complex.real;
+                return os;
+            }
+            if (complex.IsImaginary()) {
+                if (complex.imaginary == -1) {
+                    os << "-i";
+                    return os;
+                }
+                if (complex.imaginary == 1) {
+                    os << "i";
+                    return os;
+                }
+                os << complex.imaginary << "i";
+                return os;
+            }
+            os << complex.real;
+            if (complex.imaginary > 0) {
+                os << "+";
+                if (complex.imaginary == 1) {
+                    os << "i";
+                    return os;
+                }
+                os << complex.imaginary << "i";
+                return os;
+            }
+            if (complex.imaginary == -1) {
+                os << "-i";
+                return os;
+            }
+            os << complex.imaginary << "i";
             return os;
         }
 
@@ -240,11 +255,11 @@ namespace complex {
 
     // Complex valued exponent
     template<typename T>
-    Complex<T> Exp(const Complex<T> &complex, const Complex<T> &base = M_E) {
+    Complex<T> Exp(const Complex<T> &exponent, const Complex<T> &base = M_E) {
         if (base == M_E) {
-            return exp(Re(complex)) * Complex<T>(1, Im(complex), polar);
+            return exp(Re(exponent)) * Complex<T>(1, Im(exponent), polar);
         }
-        return Exp(Log(base) * complex);
+        return Exp(Log(base) * exponent);
     }
 
     // Computes complex number raised to the complex power
