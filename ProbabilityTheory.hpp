@@ -22,6 +22,14 @@ public:
 
     DiscreteRandomVariable() = default;
 
+    DiscreteRandomVariable(const std::initializer_list<T> &prob)
+    {
+        for (auto i : prob)
+        {
+            probabilities[i] = 1.0 / prob.size();
+        }
+    }
+
     DiscreteRandomVariable(const std::vector<T> &prob)
     {
         for (auto i : prob)
@@ -82,5 +90,6 @@ public:
                 result.probabilities[i.first + j.first] += i.second * j.second;
             }
         }
+        return result;
     }
 };
