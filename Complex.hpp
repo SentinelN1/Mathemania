@@ -16,6 +16,7 @@ namespace complex
     {
     private:
         T real, imaginary;
+        // Form form;
 
     public:
         // Is a number purely real?
@@ -64,10 +65,6 @@ namespace complex
         {
             switch (form)
             {
-            case default:
-                real = x;
-                imaginary = y;
-                break;
             case cartesian:
                 real = x;
                 imaginary = y;
@@ -75,6 +72,10 @@ namespace complex
             case polar:
                 real = x * cos(y);
                 imaginary = x * sin(y);
+                break;
+            default:
+                real = x;
+                imaginary = y;
                 break;
             }
         }

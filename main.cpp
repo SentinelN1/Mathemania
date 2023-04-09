@@ -1,13 +1,12 @@
 #include <iostream>
-#include <vector>
-#include "ProbabilityTheory.hpp"
+#include "Complex.hpp"
+#include "Function.hpp"
+
+using namespace complex;
+using namespace function;
 
 int main()
 {
-    // std::vector<int> vector = {-1, 1};
-    DiscreteRandomVariable<double> coin({-0.5, 0.5});
-    auto total = coin + coin + coin + coin + coin + coin + coin + coin + coin + coin + coin + coin + coin + coin + coin + coin;
-    std::cout << "Expected value: " << total.ExpectedValue() << "\n";
-    std::cout << "Variance: " << total.Variance() << "\n";
-    total.Probabilities();
+    Function<Complex<double>> f = Function<Complex<double>>::Constant(Complex<double>(6, 4));
+    std::cout << f.Derivative().Parameter();
 }

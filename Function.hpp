@@ -2,90 +2,60 @@
 
 #include "Complex.hpp"
 
-namespace function {
-    enum Types {
-        constant,
-        power,
-        exponential,
-        logarithmic,
-        summation,
-        multiplication,
-        composition,
-        tetration
+namespace function
+{
+    enum Types
+    {
+        constant, // f(z) = C
+        power,    // f(z) = z^c
+        // polinomial
+        exponential,    // f(z) = e^z, a^z
+        logarithmic,    // f(z) = ln(z), log_b(z, b)
+        summation,      // f(z) = g(z) + h(z)
+        multiplication, // f(z) = g(z) * h(z)
+        composition,    // f(z) = g(h(z))
+        tetration,      // f(z) = g(z)^h(z)
+        trigonometric,  // f(z) = sin(z), cos(z), tan(z) / tg(z), cot(z) / ctg(z), sec(z), csc(z)
+        hyperbolic      // f(z) = sinh(z), cosh(z), tanh(z), coth(z), sech(z), csch(z)
     };
 
-    template<typename T = complex::Complex<double>>
-    class Function {
+    template <typename T>
+    class Function
+    {
     private:
-        T functionParameter;
-        Types functionType;
-        const Function *first;
-        const Function *second;
+        T parameter_;
+        Types type_;
+        const Function *firstFunction_;
+        const Function *secondFunction_;
 
     public:
-        T Parameter() const {
-            return functionParameter;
+        // Function parameter
+        T Parameter() const
+        {
+            return parameter_;
         }
 
-        Types Type() const {
-            return functionType;
+        // Type of a function
+        Types Type() const
+        {
+            return type_;
         }
 
-        Function(const T &parameter = 0, const Types &type = constant) {
-            functionParameter = parameter;
-            functionType = type;
-            first = nullptr;
-            second = nullptr;
+        // Default Constructor
+        Function(const T &parameter = 0, const Types &type = Types::constant)
+        {
+            parameter_ = parameter;
+            type_ = type;
         }
 
-        Function(const T &parameter, const Types &type, const Function &f, const Function &g) {
-            functionParameter = parameter;
-            functionType = type;
-            first = &f;
-            second = &g;
+        // Constructor
+        Function(const T &parameter, const Types &type, const Function &firstFunction, const Function &secondFunction)
+        {
+            parameter_ = parameter;
+            type_ = type;
+            firstFunction_ = &firstFunction;
+            secondFunction_ = &secondFunction;
         }
-
-        static Function Constant(const T &constant) {
-            return Function(constant, Types::constant);
-        }
-
-        static Function Power(const T &power) {
-            if (power == 0) {
-                return Constant(1);
-            }
-            return Function(power, Types::power);
-        }
-
-        static Function Exponent(const T &base = M_E) {
-            if (base == 1) {
-                return Constant(1);
-            }
-            return Function(base, exponential);
-        }
-
-        static Function Logarithm(const T &base = M_E) {
-            return Function(base, logarithmic);
-        }
-
-        static Function Summation(const Function &f, const Function &g) {
-            return Function(0, summation, f, g);
-        }
-
-        static Function Multiplication(const Function &f, const Function &g) {
-            return Function(0, multiplication, f, g);
-        }
-
-        static Function Composition(const Function f, const Function g) {
-            if (g.functionType == constant) {
-                return Constant(f.Evaluate(g.functionParameter));
-            }
-            if (g.functionType == power && g.functionParameter == 1) {
-                return f;
-            }
-
-            return Function(0, composition, f, g);
-        }
-
 
         // friend std::ostream &operator<<(std::ostream &os, const Function &f)
         // {
@@ -94,7 +64,7 @@ namespace function {
         //     case 'c':
         //         os << f.functionParameter;
         //         return os;
-
+        //
         //     case 'p':
         //         os << "x";
         //         if (f.functionParameter != 1)
@@ -102,7 +72,7 @@ namespace function {
         //             os << "^(" << f.functionParameter << ")";
         //         }
         //         return os;
-
+        //
         //     case 'e':
         //         if (f.functionParameter == M_E)
         //         {
@@ -114,7 +84,7 @@ namespace function {
         //         }
         //         os << "^x";
         //         return os;
-
+        //
         //     case 'l':
         //         if (f.functionParameter == M_E)
         //         {
@@ -126,66 +96,191 @@ namespace function {
         //         }
         //         os << "(x)";
         //         return os;
-
+        //
         //     case '+':
         //         os << *f.first << "+" << *f.second;
         //         return os;
-
+        //
         //     case '*':
         //         os << *f.first << "*" << *f.second;
         //         return os;
-
+        //
         //     case 'o':
         //         os << *f.first << "(" << *f.second << ")";
         //         return os;
-
+        //
         //     default:
         //         return os;
         //     }
         // }
 
-        T Evaluate(const T &number) const {
-            switch (functionType) {
-                case constant:
-                    return functionParameter;
+        // Function evaluation method
+        T Evaluate(const T &value) const
+        {
+            switch (type_)
+            {
+            case constant:
+                return parameter_;
 
-                case power:
-                    return complex::Pow(number, functionParameter);
+            case power:
+                return complex::Pow(value, parameter_);
 
-                case exponential:
-                    return complex::Exp(number, functionParameter);
+            case exponential:
+                return complex::Exp(value, parameter_);
 
-                case logarithmic:
-                    return complex::Log(number, functionParameter);
+            case logarithmic:
+                return complex::Log(value, parameter_);
 
-                case summation:
-                    return first->Evaluate(number) + second->Evaluate(number);
+            case summation:
+                return firstFunction_->Evaluate(value) + secondFunction_->Evaluate(value);
 
-                case multiplication:
-                    return first->Evaluate(number) * second->Evaluate(number);
+            case multiplication:
+                return firstFunction_->Evaluate(value) * secondFunction_->Evaluate(value);
 
-                case composition:
-                    return first->Evaluate(second->Evaluate(number));
+            case composition:
+                return firstFunction_->Evaluate(secondFunction_->Evaluate(value));
 
-                default:
-                    return 0;
+            case tetration:
+                return complex::Pow(firstFunction_->Evaluate(value), secondFunction_->Evaluate(value));
+
+            default:
+                return 0;
             }
         }
 
-//        Function operator+(const Function &f) {
-//            return Function(0, '+', this, &f);
-//        }
-//
-//        Function operator*(const Function &f) {
-//            return Function(0, '*', this, &f);
-//        }
-//
-//        Function operator()(const Function &f) {
-//            return Function(0, 'o', this, &f);
-//        }
-//
-//        friend Function operator*(const T &_coefficient, const Function &_function) {
-//            return Function::Constant(_coefficient) * _function;
-//        }
+        static Function Constant(const T &constant)
+        {
+            return Function(constant, Types::constant);
+        }
+
+        static Function Power(const T &power)
+        {
+            if (power == 0)
+            {
+                return Constant(1);
+            }
+            return Function(power, Types::power);
+        }
+
+        static Function Exponent(const T &base = M_E)
+        {
+            if (base == 0)
+            {
+                return Constant(0);
+            }
+            if (base == 1)
+            {
+                return Constant(1);
+            }
+            return Function(base, exponential);
+        }
+
+        static Function Logarithm(const T &base = M_E)
+        {
+            return Function(base, logarithmic);
+        }
+
+        static Function Summation(const Function &function1, const Function &function2)
+        {
+            return Function(0, summation, &function1, &function2);
+        }
+
+        static Function Multiplication(const Function &function1, const Function &function2)
+        {
+            return Function(0, multiplication, &function1, &function2);
+        }
+
+        static Function Composition(const Function &function1, const Function &function2)
+        {
+            if (function1.type_ == constant)
+            {
+                return Constant(function1.parameter_);
+            }
+
+            if (function2.type_ == constant)
+            {
+                return Constant(function1.Evaluate(function2.parameter_));
+            }
+
+            if (function1.type_ == power && function1.parameter_ == 1)
+            {
+                return function2;
+            }
+
+            if (function2.type_ == power && function2.parameter_ == 1)
+            {
+                return function1;
+            }
+
+            return Function(0, composition, &function1, &function2);
+        }
+
+        // Operators overloading
+        Function operator+(const Function &function) const
+        {
+            return Summation(*this, function);
+        }
+
+        Function operator*(const Function &function) const
+        {
+            return Multiplication(*this, function);
+        }
+
+        Function operator*(const T &coefficient) const
+        {
+            return Multiplication(Constant(coefficient), *this);
+        }
+
+        friend Function operator*(const T &coefficient, const Function &function)
+        {
+            return Multiplication(Constant(coefficient), function);
+        }
+
+        Function operator-(const Function &function) const
+        {
+            return Summation(Multiplication(Constant(-1), function), *this);
+        }
+
+        Function operator()(const Function &function) const
+        {
+            return Composition(*this, function);
+        }
+
+        Function Derivative() const
+        {
+            switch (type_)
+            {
+            case constant:
+                return Constant(0);
+
+            case power:
+                if (parameter_ == 1)
+                {
+                    return Constant(1);
+                }
+                return Multiplication(Constant(parameter_), Power(parameter_ - 1));
+
+            case exponential:
+                return Multiplication(Constant(Log(parameter_)), *this);
+
+            case logarithmic:
+                if (parameter_ == M_E)
+                {
+                    return Power(-1);
+                }
+
+            case summation:
+                return Summation(firstFunction_->Derivative(), secondFunction_->Derivative());
+
+            case multiplication:
+                return Summation(Multiplication(firstFunction_->Derivative(), *secondFunction_), Multiplication(*firstFunction_, secondFunction_->Derivative()));
+
+            case composition:
+                return Multiplication(Composition(firstFunction_->Derivative(), *secondFunction_), *secondFunction_);
+
+                // case tetration:
+                //     return complex::Pow(firstFunction_->Evaluate(value), secondFunction_->Evaluate(value));
+            }
+        };
     };
 }
