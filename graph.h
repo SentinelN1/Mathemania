@@ -1,14 +1,11 @@
 #pragma once
 
-#include "Matrix.hpp"
+#include "matrix.h"
 #include <fstream>
 #include <vector>
 #include <list>
 #include <map>
 #include <set>
-
-using namespace matrix;
-using std::string, std::vector, std::list, std::pair, std::map, std::set;
 
 template <typename TNode>
 class Node
@@ -46,12 +43,12 @@ struct NodeCompare
     }
 };
 
-template <typename TNode, typename TWeight>
+template <typename TNode, typename EdgeWeight>
 class Graph
 {
-private:
-    map<Node<TNode>, size_t, NodeCompare<TNode>> graphNodes;
-    Matrix<TWeight> adjacencyMatrix;
+protected:
+    std::map<Node<TNode>, size_t, NodeCompare<TNode>> graphNodes;
+    Matrix<EdgeWeight> adjacencyMatrix;
 
 public:
     size_t size() const
@@ -82,7 +79,7 @@ public:
         return s;
     }
 
-    Matrix<TWeight> AdjacencyMatrix() const
+    Matrix<EdgeWeight> AdjacencyMatrix() const
     {
         return adjacencyMatrix;
     }
@@ -96,7 +93,7 @@ public:
     void clear()
     {
         graphNodes.clear();
-        adjacencyMatrix.Clear();
+        adjacencyMatrix.clear();
     }
 
     void swap(Graph &other)
@@ -112,13 +109,13 @@ public:
     Graph() = default;
 
     // Constructor from vector
-    Graph(const vector<Node<TNode>> &nodes, const Matrix<TWeight> &matrix)
+    Graph(const vector<Node<TNode>> &nodes, const Matrix<EdgeWeight> &matrix)
     {
         if (!matrix.square())
         {
             throw std::invalid_argument("Adjacency matrix has to have equal number of rows and columns.");
         }
-        if (nodes.size() != matrix.Rows())
+        if (nodes.size() != matrix.rows())
         {
             throw std::invalid_argument(
                 "Dimensions of the adjacency matrix should be equal to the number of vertices.");
@@ -133,13 +130,13 @@ public:
     }
 
     // Constructor from list
-    Graph(const list<Node<TNode>> &nodes, const Matrix<TWeight> &matrix)
+    Graph(const list<Node<TNode>> &nodes, const Matrix<EdgeWeight> &matrix)
     {
         if (!matrix.square())
         {
             throw std::invalid_argument("Adjacency matrix has to have equal number of rows and columns.");
         }
-        if (nodes.size() != matrix.Rows())
+        if (nodes.size() != matrix.rows())
         {
             throw std::invalid_argument(
                 "Dimensions of the adjacency matrix should be equal to the number of vertices.");
@@ -154,13 +151,13 @@ public:
     }
 
     // Constructor from set
-    Graph(const set<Node<TNode>, NodeCompare<TNode>> &nodes, const Matrix<TWeight> &matrix)
+    Graph(const set<Node<TNode>, NodeCompare<TNode>> &nodes, const Matrix<EdgeWeight> &matrix)
     {
         if (!matrix.square())
         {
-            throw std::invalid_argument("Adjacency matrix has to have equal number of rows and columns.");
+            throw std::invalid_argument("Adjacency matrix has to have an equal number of rows and columns.");
         }
-        if (nodes.size() != matrix.Rows())
+        if (nodes.size() != matrix.rows())
         {
             throw std::invalid_argument(
                 "Dimensions of the adjacency matrix should be equal to the number of vertices.");
@@ -178,7 +175,7 @@ public:
     ~Graph() = default;
 
     // Copy Constructor
-    Graph(Graph<TNode, TWeight> &other)
+    Graph(Graph<TNode, EdgeWeight> &other)
     {
         if (this != &other)
         {
@@ -287,7 +284,7 @@ public:
         {
             return std::make_pair(graphNodes.end(), false);
         }
-        Matrix<TWeight> matrix(size() + 1, size() + 1, 0);
+        Matrix<EdgeWeight> matrix(size() + 1, size() + 1, 0);
         for (size_t i = 0; i < size(); ++i)
         {
             for (size_t j = 0; j < size(); ++j)
@@ -311,7 +308,7 @@ public:
         {
             return std::make_pair(it, true);
         }
-        Matrix<TWeight> matrix(size() + 1, size() + 1, 0);
+        Matrix<EdgeWeight> matrix(size() + 1, size() + 1, 0);
         for (size_t i = 0; i < size(); ++i)
         {
             for (size_t j = 0; j < size(); ++j)
@@ -324,7 +321,7 @@ public:
         return std::make_pair(graphNodes.find(node), true);
     }
 
-    auto insert_edge(const pair<const Node<TNode> &, const Node<TNode> &> &nodes, const TWeight &weight)
+    auto insert_edge(const pair<const Node<TNode> &, const Node<TNode> &> &nodes, const EdgeWeight &weight)
     {
         auto fromNode = nodes.first;
         auto toNode = nodes.second;
@@ -340,7 +337,7 @@ public:
         return std::make_pair(graphNodes.find(fromNode), true);
     }
 
-    auto insert_or_assign_edge(const pair<const Node<TNode> &, const Node<TNode> &> &nodes, const TWeight &weight)
+    auto insert_or_assign_edge(const pair<const Node<TNode> &, const Node<TNode> &> &nodes, const EdgeWeight &weight)
     {
         auto fromNode = nodes.first;
         auto toNode = nodes.second;
@@ -356,7 +353,7 @@ public:
     // 7. Удаление узлов и рёбер из Graph -- начало
     void clear_edges()
     {
-        adjacencyMatrix = Matrix<TWeight>(size(), size(), 0);
+        adjacencyMatrix = Matrix<EdgeWeight>(size(), size(), 0);
     }
 
     bool erase_edges_go_from(const Node<TNode> &node)
@@ -448,10 +445,10 @@ public:
     // 8. Считывание и запись в файл -- конец
 };
 
-template <typename TNode, typename TWeight>
-void swap(Graph<TNode, TWeight> &graph1, Graph<TNode, TWeight> &graph2)
+template <typename TNode, typename EdgeWeight>
+void swap(Graph<TNode, EdgeWeight> &graph1, Graph<TNode, EdgeWeight> &graph2)
 {
-    Graph<TNode, TWeight> tmp = graph1;
+    Graph<TNode, EdgeWeight> tmp = graph1;
     graph1 = graph2;
     graph2 = tmp;
 }
