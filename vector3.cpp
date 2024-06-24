@@ -83,6 +83,16 @@ Vector3D Vector3D::operator/=(const float &divisor)
     return *this;
 }
 
+Vector3D Vector3D::operator+() const
+{
+    return Vector3D(x, y, z);
+}
+
+Vector3D Vector3D::operator-() const
+{
+    return Vector3D(-x, -y, -z);
+}
+
 bool Vector3D::operator==(const Vector3D &other) const
 {
     return this->x == other.x && this->y == other.y && this->z == other.z;
